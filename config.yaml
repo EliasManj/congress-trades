@@ -1,0 +1,6 @@
+url: https://disclosures-clerk.house.gov/public_disc/financial-pdfs/{YEAR}FD.zip
+db: db/database.db
+years:
+  - 2024
+zip_path: data/zip
+data_path: data/xml
