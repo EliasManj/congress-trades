@@ -164,3 +164,4 @@ cython_debug/
 data/pdf/*
 data/xml/*
 data/zip/*
+db/database.db
