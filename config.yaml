@@ -3,4 +3,13 @@ db: db/database.db
 years:
   - 2024
 zip_path: data/zip
-data_path: data/xml
+xml_directory: data/xml
+members:
+  - gottheimer
+  - goldman
+  - tuberville
+  - pelosi
+  - scott
+  - franklin
+  - mullin
+  - green

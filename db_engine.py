@@ -35,6 +35,22 @@ class Filling(Base):
 
     # Relationship to person
     person = relationship("Person", back_populates="fillings")
+    transactions = relationship("Transaction", back_populates="filling")
+
+class Transaction(Base):
+    __tablename__ = 'transactions'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    filling_id = Column(Integer, ForeignKey('fillings.id'), nullable=False)
+    asset = Column(String)
+    transaction_type = Column(String)
+    transaction_date = Column(String)
+    notification_date = Column(String)
+    amount = Column(String)
+    
+    __table_args__ = (UniqueConstraint('filling_id', 'transaction_date', 'amount', name='_transaction_unique'),)
+
+    # Relationship to filling
+    filling = relationship("Filling", back_populates="transactions")
 
 class DbEngine:
 

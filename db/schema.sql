@@ -18,3 +18,15 @@ CREATE TABLE fillings (
     UNIQUE (person_id, filing_date, docid)
     FOREIGN KEY (person_id) REFERENCES persons(id)
 );
+
+CREATE TABLE transactions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    filling_id INTEGER NOT NULL,
+    asset TEXT,
+    transaction_type TEXT,
+    transaction_date TEXT,
+    notification_date TEXT,
+    amount TEXT,
+    UNIQUE (filling_id, transaction_date, amount)
+    FOREIGN KEY (filling_id) REFERENCES fillings(id)
+);
