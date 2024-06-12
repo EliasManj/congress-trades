@@ -1,9 +1,10 @@
 url: https://disclosures-clerk.house.gov/public_disc/financial-pdfs/{YEAR}FD.zip
-db: db/database.db
+db: sqlite:///db/database.db
 years:
   - 2024
 zip_path: data/zip
 xml_directory: data/xml
+pdf_directory: data/pdf
 members:
   - gottheimer
   - goldman

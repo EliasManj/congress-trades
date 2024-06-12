@@ -23,13 +23,12 @@ class Person(Base):
 # Define the Filling class
 class Filling(Base):
     __tablename__ = 'fillings'
-    id = Column(Integer, primary_key=True, autoincrement=True)  # Primary key column added
+    docid = Column(String, primary_key=True)  # Primary key column added
     person_id = Column(Integer, ForeignKey('persons.id'), nullable=False)
     filing_type = Column(String)
     state_dst = Column(String)
     year = Column(String)
     filing_date = Column(String)
-    docid = Column(String)
     
     __table_args__ = (UniqueConstraint('person_id', 'filing_date', 'docid', name='_filling_unique'),)
 
@@ -40,14 +39,15 @@ class Filling(Base):
 class Transaction(Base):
     __tablename__ = 'transactions'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    filling_id = Column(Integer, ForeignKey('fillings.id'), nullable=False)
+    docid = Column(Integer, ForeignKey('fillings.docid'), nullable=False)
     asset = Column(String)
     transaction_type = Column(String)
     transaction_date = Column(String)
     notification_date = Column(String)
-    amount = Column(String)
+    min_amount = Column(String)
+    max_amount = Column(String)
     
-    __table_args__ = (UniqueConstraint('filling_id', 'transaction_date', 'amount', name='_transaction_unique'),)
+    __table_args__ = (UniqueConstraint('asset','docid', 'transaction_date', 'min_amount', 'max_amount', name='_transaction_unique'),)
 
     # Relationship to filling
     filling = relationship("Filling", back_populates="transactions")
