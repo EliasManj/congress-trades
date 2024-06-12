@@ -3,8 +3,8 @@ import re
 import os
 
 column_names = re.compile(r'ID Owner Asset Transaction Date Notification Amount Cap.\nType Date Gains >\n\$200\?')
-separator = re.compile(r'\nF S: New\n(?:D: .*\n)?(?:S O: .*\n)?')    
-stock_pattern = r'^[SP]+\s+(.+?)\s+(S \(partial\)|S|P)\s+'
+separator = re.compile(r'\nF S: New\n(?:D: .*\n)?(?:S O: .*\n)?(?:D: .*\n)?(?:C: .*\n)?')    
+stock_pattern = r'^(?:JT|SP)?(.+?)\s+(S \(partial\)|S|P)\s+'
 date_pattern = r'(\d{2}/\d{2}/\d{4})'
 amount_pattern = r'\$\d{1,3}(?:,\d{3})*(?:\s*-\s*\$\d{1,3}(?:,\d{3})*|(?: -)?(?:[\d,]+)?)'
 

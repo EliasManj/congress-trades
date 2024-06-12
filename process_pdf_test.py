@@ -5,14 +5,13 @@ class ProcessPdfClass(unittest.TestCase):
 
     def setUp(self):
         # Initialize resources before each test
-        #self.docs = [
-        #    {'file':'data/pdf/2024/20024542.pdf', 'purchases': 2},
-        #    {'file':'data/pdf/2024/20024572.pdf', 'purchases': 1},
-        #    {'file':'data/pdf/2024/20024800.pdf', 'purchases': 1},
-        #    {'file':'data/pdf/2024/20025064.pdf', 'purchases': 2},
-        #    {'file':'data/pdf/2024/20025020.pdf', 'purchases': 29}
-        #]
         self.docs = [
+            {'file':'data/pdf/2024/20024062.pdf', 'purchases': 2},
+            {'file':'data/pdf/2024/20024248.pdf', 'purchases': 42},
+            {'file':'data/pdf/2024/20024413.pdf', 'purchases': 1},
+            {'file':'data/pdf/2024/20024461.pdf', 'purchases': 37},
+            {'file':'data/pdf/2024/20024612.pdf', 'purchases': 42},
+            {'file':'data/pdf/2024/20024572.pdf', 'purchases': 1},
             {'file':'data/pdf/2024/20025020.pdf', 'purchases': 29}
         ]
 
