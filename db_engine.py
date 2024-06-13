@@ -41,13 +41,15 @@ class Transaction(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     docid = Column(Integer, ForeignKey('fillings.docid'), nullable=False)
     asset = Column(String)
+    security = Column(String)
+    ticker = Column(String)
     transaction_type = Column(String)
     transaction_date = Column(String)
     notification_date = Column(String)
     min_amount = Column(String)
     max_amount = Column(String)
     
-    __table_args__ = (UniqueConstraint('asset','docid', 'transaction_date', 'min_amount', 'max_amount', name='_transaction_unique'),)
+    __table_args__ = (UniqueConstraint('asset', 'security', 'docid', 'transaction_date', 'min_amount', 'max_amount', name='_transaction_unique'),)
 
     # Relationship to filling
     filling = relationship("Filling", back_populates="transactions")

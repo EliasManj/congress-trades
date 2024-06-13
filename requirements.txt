@@ -4,3 +4,4 @@ sqlalchemy
 pypdf
 pdfplumber
 jupyter
+panel

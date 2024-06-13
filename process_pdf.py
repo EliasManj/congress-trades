@@ -11,6 +11,7 @@ stock_pattern = r'^(?:JT|SP)?(.+?)\s+(S \(partial\)|S|P)\s+'
 date_pattern = r'(\d{2}/\d{2}/\d{4})'
 amount_pattern = r'\$(\d{1,3}(?:,\d{3})(?:,\d{3})?)'
 amount_pattern_asset = r'(\$\d{1,3}(?:,\d{3})(?:,\d{3})?)'
+ticker_pattern = r'\((\w+)\)'
 
 def printls(array):
     print('[')
@@ -70,16 +71,37 @@ def parse_string(s, filing):
     if not amount_matches:
         return None
     
+    sorted_amounts = sorted(amount_matches, key=lambda x: int(x.replace(',', '')))
+
+    # check if purchase is stock or option
     
-    return (stock, type_, date, notification_date, amount_matches[0], amount_matches[1], filing)
+    if '[OP]' in stock:
+        security = 'OP'
+        stock = stock.replace('[OP]', '')
+    elif '[ST]' in stock:
+        security = 'ST'
+        stock = stock.replace('[ST]', '')
+    elif '[AB]' in stock:
+        security = 'AB'
+        stock = stock.replace('[AB]', '')
+    else:
+        security = 'ST'
+
+    match = re.search(ticker_pattern, stock)
+
+    ticker = match.group(1) if match else None
+    
+    return {'stock': stock,  'ticker': ticker, 'security': security, 'type': type_, 'date': date, 'notification_date': notification_date, 'min_amount': sorted_amounts[0], 'max_amount': sorted_amounts[1], 'filing': filing}
 
 def parse_list1(array):
     array = array[:-1]
     processed_list = []
     for item in array:
         lines = item.split('\n')
-        if ('[ST]' in lines[-1] or '[OP]' in lines[-1]) and len(lines) > 1:
-            last_line = lines.pop()
+        if ('[ST]' in lines[-1] or '[OP]' in lines[-1] or '[AB]' in lines[-1]) and len(lines) > 1:
+            last_line = ""
+            while len(lines) > 1:
+                last_line += lines.pop()
             # Find the position of the first date (assumed to be in the format MM/DD/YYYY)
             match = re.search(r' S \(partial\) | P | S ', lines[0])
             if match:
@@ -94,14 +116,13 @@ def convert_to_dict(array, filing):
 def get_pdf_purchases(file):
     file_name = os.path.splitext(os.path.basename(file))[0]
     text = get_filings_from_pdf(file)
-    print(text)
     result = re.split(separator, text)
     parsed1 = parse_list1(result)
     parsed2 = convert_to_dict(parsed1, file_name)
+    for item in parsed2:
+        if item is None:
+            print("item is None")
     return parsed2
-
-def pdf_purchases_to_df(purchases):
-    return pd.DataFrame(purchases, columns=['Stock', 'Type', 'Date', 'Notification Date', 'Amount', 'Filing'])
 
 def list_files(directory):
     file_paths = []
@@ -112,10 +133,12 @@ def list_files(directory):
     return file_paths
 
 def insert_purchases_to_db(purchases, db):
-    for purchase in purchases:
-        exists = db.session.query(db_engine.Transaction).filter_by(asset=purchase[0], transaction_date=purchase[2], min_amount=purchase[4], max_amount=purchase[5], docid=purchase[6]).first()
+    for index, purchase in enumerate(purchases):
+        if purchase is None:
+            continue
+        exists = db.session.query(db_engine.Transaction).filter_by(asset=purchase['stock'], transaction_date=purchase['date'], min_amount=purchase['min_amount'], max_amount=purchase['max_amount'], docid=purchase['filing']).first()
         if not exists:
-            db_purchase = db_engine.Transaction(asset=purchase[0], transaction_type=purchase[1], transaction_date=purchase[2], notification_date=purchase[3], min_amount=purchase[4], max_amount=purchase[5], docid=purchase[6])
+            db_purchase = db_engine.Transaction(asset=purchase['stock'], security=purchase['security'], transaction_type=purchase['type'], transaction_date=purchase['date'], notification_date=purchase['notification_date'], min_amount=purchase['min_amount'], max_amount=purchase['max_amount'], docid=purchase['filing'], ticker=purchase['ticker'])
             db.session.add(db_purchase)
             db.session.commit()
 
@@ -127,6 +150,7 @@ if __name__ == "__main__":
     pdf_files = list_files(pdf_path)
     purchases = []
     for file in pdf_files:
+        print(file)
         purchases.extend(get_pdf_purchases(file))
     insert_purchases_to_db(purchases, db)
     
