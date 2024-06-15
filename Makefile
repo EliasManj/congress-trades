@@ -8,5 +8,5 @@ get-pdfs:
 	@python3 get_pdfs.py
 db-rm:
 	@rm db/database.db
-del-all: del-xmls del-pdfs 
+del-all: del-xmls del-pdfs db-rm
 .PHONY: db-rm del-pdfs del-all

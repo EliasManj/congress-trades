@@ -1,16 +1,16 @@
 url: https://disclosures-clerk.house.gov/public_disc/financial-pdfs/{YEAR}FD.zip
 db: sqlite:///db/database.db
-years:
-  - 2024
-zip_path: data/zip
-xml_directory: data/xml
-pdf_directory: data/pdf
-members:
-  - gottheimer
-  - goldman
-  - tuberville
-  - pelosi
-  - scott
-  - franklin
-  - mullin
-  - green
+data:
+  dir: data
+  years:
+    from: 2020
+    to: 2024
+  members:
+    - gottheimer
+    - goldman
+    - tuberville
+    - pelosi
+    - scott
+    - franklin
+    - mullin
+    - green

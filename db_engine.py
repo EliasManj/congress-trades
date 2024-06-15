@@ -1,7 +1,10 @@
 from sqlalchemy import create_engine, Column, Integer, String, ForeignKey, UniqueConstraint
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
+import logging
 
+logging.basicConfig()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.WARNING)
 
 # Define a base class
 Base = declarative_base()

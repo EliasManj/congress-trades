@@ -6,12 +6,13 @@ import xml.etree.ElementTree as ET
 
 class PdfDownloader:
 
-    def __init__(self, config):
-        self.db = db_engine.DbEngine('sqlite:///db/database.db')
-        self.config = config
+
+    def __init__(self, _config):
+        self.config = _config
+        self.db = db_engine.DbEngine(self.config['db'])
 
     def process_xml_files(self):
-        directory = self.config['xml_directory']
+        directory = f'{self.config["data"]["dir"]}/xml'
         result = {}
         # Iterate through all files in the directory
         for filename in os.listdir(directory):
@@ -31,7 +32,7 @@ class PdfDownloader:
 
     def process_persons(self):
         metadata = self.process_xml_files()
-        person_filter = self.config['members']
+        person_filter = self.config['data']['members']
         for file in metadata:
             for entry in metadata[file]:
                 if entry['Last'].lower() in person_filter:
@@ -52,23 +53,6 @@ class PdfDownloader:
             if filing.filing_type == 'P':
                 self.download_filling_pdf(filing)
 
-    def row_to_dict(self, row):
-        return {col[0]: row[i] for i, col in enumerate(self.cursor.description)}
-    
-    def check_if_person(self, person):
-        query = f"SELECT id FROM persons WHERE"
-        conditions = []
-        values = []
-        for key, value in person.items():
-            if value is None:
-                conditions.append(f"{key.lower()} IS NULL")
-            else:
-                conditions.append(f"{key.lower()} = ?")
-                values.append(value)
-        query += " AND ".join(conditions)
-        self.cursor.execute(query, values)
-        return self.cursor.fetchone()
-
     def download_filling_pdf(self, filing):
         year = filing.year
         doc =  filing.docid
@@ -77,7 +61,7 @@ class PdfDownloader:
             url = f"https://disclosures-clerk.house.gov/public_disc/ptr-pdfs/{year}/{doc}.pdf"
         else:
             url = f"https://disclosures-clerk.house.gov/public_disc/financial-pdfs/{year}/{doc}.pdf"
-        get_xmls.download_file(url, f"data/pdf/{year}/{doc}.pdf")
+        get_xmls.download_file(url, f"{self.config['data']['dir']}/pdf/{year}/{doc}.pdf")
 
 
 if __name__ == '__main__':

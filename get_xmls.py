@@ -64,12 +64,16 @@ def delete_all_files_in_directory(directory_path):
 
 def get_files(config):
     # download zip files
-    years = config['years']
-    zip_folder = config['zip_path']
-    data_folder = config['xml_directory']
+    _from = config['data']['years']['from']
+    _to = config['data']['years']['to'] + 1
+    years = list(range(_from, _to))
+    zip_folder = f'{config["data"]["dir"]}/zip'
+    data_folder = f'{config["data"]["dir"]}/xml'
     file = config['url']
+
     os.makedirs(zip_folder, exist_ok=True)
     os.makedirs(data_folder, exist_ok=True)
+
     for year in years:
         url = file.format(YEAR=year)
         zip_file = f"{zip_folder}/{year}FD.zip"
@@ -80,8 +84,8 @@ def get_files(config):
 def main():
 
     config = load_config()
-    zip_folder = config['zip_path']
-    data_folder = config['xml_directory']
+    zip_folder = f'{config["data"]["dir"]}/zip'
+    data_folder = f'{config["data"]["dir"]}/xml'
 
     parser = argparse.ArgumentParser(description="Process some parameters.")
     parser.add_argument('--delete', action='store_true', help="Call function1")
