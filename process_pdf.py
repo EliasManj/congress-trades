@@ -1,12 +1,15 @@
 import pdfplumber
 import re
 import os
-import pandas as pd
 import yaml
 import db_engine
+import logging
+
+logging.basicConfig()
+logging.getLogger('sqlalchemy.engine').setLevel(logging.WARNING)
 
 column_names = re.compile(r'ID Owner Asset Transaction Date Notification Amount Cap.\nType Date Gains >\n\$200\?')
-separator = re.compile(r'\nF S: New\n(?:D: .*\n)?(?:S O: .*\n)?(?:D: .*\n)?(?:C: .*\n)?(?:L: .*\n)?(?:D: .*\n)?')
+separator = re.compile(r'\nF S: New\n(?:L: .*\n|D: .*\n|C: .*\n|S O: .*\n)*')
 stock_pattern = r'^(?:JT|SP)?(.+?)\s+(S \(partial\)|S|P)\s+'
 date_pattern = r'(\d{2}/\d{2}/\d{4})'
 amount_pattern = r'\$(\d{1,3}(?:,\d{3})(?:,\d{3})?)'
@@ -119,8 +122,6 @@ def get_pdf_purchases(file):
     result = re.split(separator, text)
     parsed1 = parse_list1(result)
     parsed2 = convert_to_dict(parsed1, file_name)
-    if '20022653' in file:
-        print('e')
     for item in parsed2:
         if item is None:
             print("item is None")

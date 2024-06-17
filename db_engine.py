@@ -60,7 +60,7 @@ class Transaction(Base):
 class DbEngine:
 
     def __init__(self, url):
-        self.engine = create_engine(url, echo=True)
+        self.engine = create_engine(url, echo=False)
         Base.metadata.create_all(self.engine)
         Session = sessionmaker(bind=self.engine)
         self.session = Session()
