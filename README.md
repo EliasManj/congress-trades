@@ -28,6 +28,8 @@ To download and parse disclosure information:
 make get-data
 ```
 
+Visualization showcase
+
 ![Dashboard Video](static/example.gif)
 
 
